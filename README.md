@@ -1,2 +1,2 @@
 # sensor-networks
-lecture and paper for module sensor networks of HTW Dresden (I771)
+presentation, code and paper for module sensor networks of HTW Dresden (I771)
