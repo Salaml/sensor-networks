@@ -1,0 +1,35 @@
+@startuml
+participant Node
+participant "Server via Gateway" as Server
+database "ADR" as ADR
+
+== Initialisierung ==
+
+autonumber 1
+Node-> Server: <Nachricht>
+autonumber stop
+activate Server
+Server -> ADR: SNR speichern
+deactivate  Server
+activate ADR
+... weitere Nachrichten ...
+autonumber 19
+Node-> Server: <Nachricht>
+autonumber stop
+activate Server
+Server -> ADR: SNR speichern
+deactivate  Server
+
+== Betrieb ==
+
+loop while ADR aktiviert
+Node-> Server: <Nachricht>
+activate Server
+Server -> ADR: SNR speichern
+ADR -> Server: \nÜberschuss = avg(SNR) - Mindest-SNR \n → SNR zu hoch/niedrig
+Server -> Node: <Nachricht mit neuer Datenrate>
+deactivate  Server
+end
+
+deactivate ADR
+@enduml
