@@ -11,9 +11,7 @@
  * 2. Download the same code into two CubeCell devices, then they will begin Ping Pong test each other;
  * 3. This example is for CubeCell hardware basic test.
  *
- * HelTec AutoMation, Chengdu, China
- * ??????????????
- * www.heltec.org
+ * HelTec AutoMation, Chengdu, China, www.heltec.org
  *
  * this project also realess in GitHub:
  * https://github.com/HelTecAutomation/ASR650x-Arduino
@@ -34,27 +32,26 @@
 
 extern SSD1306Wire  display;
 
-#define RF_FREQUENCY                                868000000 // Hz
+#define RF_FREQUENCY                868000000 // Hz
 
-#define TX_OUTPUT_POWER                             5        // dBm
+#define TX_OUTPUT_POWER             5         // dBm
 
-#define LORA_BANDWIDTH                              0         // [0: 125 kHz,
-                                                              //  1: 250 kHz,
-                                                              //  2: 500 kHz,
-                                                              //  3: Reserved]
-#define LORA_SPREADING_FACTOR                       7         // [SF7..SF12]
-#define LORA_CODINGRATE                             1         // [1: 4/5,
-                                                              //  2: 4/6,
-                                                              //  3: 4/7,
-                                                              //  4: 4/8]
-#define LORA_PREAMBLE_LENGTH                        8         // Same for Tx and Rx
-#define LORA_SYMBOL_TIMEOUT                         0         // Symbols
-#define LORA_FIX_LENGTH_PAYLOAD_ON                  false
-#define LORA_IQ_INVERSION_ON                        false
+#define LORA_BANDWIDTH              0         // [0: 125 kHz,
+                                              //  1: 250 kHz,
+                                              //  2: 500 kHz,
+                                              //  3: Reserved]
+#define LORA_SPREADING_FACTOR       7         // [SF7..SF12]
+#define LORA_CODINGRATE             1         // [1: 4/5,
+                                              //  2: 4/6,
+                                              //  3: 4/7,
+                                              //  4: 4/8]
+#define LORA_PREAMBLE_LENGTH        8         // Same for Tx and Rx
+#define LORA_SYMBOL_TIMEOUT         0         // Symbols
+#define LORA_FIX_LENGTH_PAYLOAD_ON  false
+#define LORA_IQ_INVERSION_ON        false
 
-
-#define RX_TIMEOUT_VALUE                            1000
-#define BUFFER_SIZE                                 60 // Define the payload size here
+#define RX_TIMEOUT_VALUE            1000
+#define BUFFER_SIZE                 60 // Define the payload size here
 
 char txpacket[BUFFER_SIZE];
 char rxpacket[BUFFER_SIZE];
@@ -118,10 +115,10 @@ void setup() {
 
 void loop()
 {
-	switch(state)
-	{
-		case TX:
-		  turnOnRGB(COLOR_SEND,0);
+  switch(state)
+  {
+    case TX:
+      turnOnRGB(COLOR_SEND,0);
 
       if (isServer) {
         memcpy(txpacket, rxpacket, rxSize);
@@ -133,17 +130,17 @@ void loop()
         displayInfo(true, false);
       }
       Serial.printf("\r\nTX: \"%s\"\r\n", txpacket);
-	    Radio.Send( (uint8_t *)txpacket, strlen(txpacket) );
-	    state = WAIT;
-	    break;
-		case RX:
-			Serial.println("into RX mode");
-	    Radio.Rx( 0 );
-	    state = WAIT;
-	    break;
-		case WAIT_INPUT:
+      Radio.Send( (uint8_t *)txpacket, strlen(txpacket) );
+      state = WAIT;
+      break;
+    case RX:
+      Serial.println("into RX mode");
+      Radio.Rx( 0 );
+      state = WAIT;
+      break;
+    case WAIT_INPUT:
       while(Serial.available() > 0) {
-			  int input = Serial.read();
+        int input = Serial.read();
         if (input == '\n') {
           // terminate string and send
           txpacket[txSize] = '\0';
@@ -157,7 +154,7 @@ void loop()
             txSize = 0;
         }
       }
-		  break;
+      break;
     case SWITCH_MODE:
       if (isServer) {
         state = RX;
@@ -170,15 +167,15 @@ void loop()
     case WAIT:
     default:
       break;
-	}
+  }
   Radio.IrqProcess( );
 }
 
 void OnTxDone( void )
 {
-	Serial.print("TX done......");
-	turnOnRGB(0,0);
-	state = RX;
+  Serial.print("TX done......");
+  turnOnRGB(0,0);
+  state = RX;
 }
 
 void OnTxTimeout( void )
@@ -189,40 +186,40 @@ void OnTxTimeout( void )
 }
 void OnRxDone( uint8_t *payload, uint16_t size, int16_t rssi, int8_t snr )
 {
-    Rssi = rssi;
-    Snr = snr;
-    rxSize = size;
-    memcpy(rxpacket, payload, size );
-    rxpacket[size] = '\0';
-    turnOnRGB(COLOR_RECEIVED,0);
-    Radio.Sleep( );
+  Rssi = rssi;
+  Snr = snr;
+  rxSize = size;
+  memcpy(rxpacket, payload, size );
+  rxpacket[size] = '\0';
+  turnOnRGB(COLOR_RECEIVED,0);
+  Radio.Sleep( );
 
-    Serial.printf("RX \"%s\" with SNR %d and Rssi %d , length %d\r\n",rxpacket,Snr, Rssi,rxSize);
+  Serial.printf("RX \"%s\" with SNR %d and Rssi %d , length %d\r\n",rxpacket,Snr, Rssi,rxSize);
 
-    if (isServer) {
-      displayInfo(false, true);
-      state = TX;
-    } else {
-      displayInfo(true, true);
-      txSize = 0;
-      state = WAIT_INPUT;
-    }
-    turnOnRGB(0,0);
+  if (isServer) {
+    displayInfo(false, true);
+    state = TX;
+  } else {
+    displayInfo(true, true);
+    txSize = 0;
+    state = WAIT_INPUT;
+  }
+  turnOnRGB(0,0);
 }
 
 void displayInfo(bool displaySend, bool displayReceive)
 {
-    display.clear();
-    display.drawString(0, 0, isServer ? "Server" : "Client");
-    display.drawString(0, 15,  "TX =>");
-    if (displaySend)
-      display.drawString(30, 15, txpacket);
-    display.drawString(0, 30,  "RX <=");
-    if (displayReceive) {
-      display.drawString(30, 30, rxpacket);
-      display.drawString(0, 45, "SNR " + String(Snr,DEC) + ", RSSI  " + String(Rssi,DEC));
-    }
-    display.display();
+  display.clear();
+  display.drawString(0, 0, isServer ? "Server" : "Client");
+  display.drawString(0, 15,  "TX =>");
+  if (displaySend)
+    display.drawString(30, 15, txpacket);
+  display.drawString(0, 30,  "RX <=");
+  if (displayReceive) {
+    display.drawString(30, 30, rxpacket);
+    display.drawString(0, 45, "SNR " + String(Snr,DEC) + ", RSSI  " + String(Rssi,DEC));
+  }
+  display.display();
 }
 
 void userKey(void)
