@@ -1,0 +1,110 @@
+\documentclass[%
+	fontsize=12pt,%     Schrfitgroesse 12pt
+	paper=a4,%          Seitengroesse A4
+	toc=listof,%        Abbildungs-, Tabellen- sowie ...
+	toc=bibliography,%  ... Literaturverzeichnis als Eintrag im Inhaltsverzeichnis
+]{scrreprt}% KOMA-Script-Report
+
+\usepackage[utf8]{inputenc}% Dateien UTF-8 kodiert
+\usepackage[T1]{fontenc}%    T1-Schriftkodierung
+\usepackage{lmodern}%        Latin-Modern-Schriftart
+\usepackage[ngerman]{babel}% neue deutsche Rechtschreibung
+
+\usepackage[top=30mm, bottom=30mm, inner=25mm, outer=25mm]{geometry}% Seitenrand
+
+\usepackage[onehalfspacing]{setspace}% Zeilenabstand 1,5-fach
+
+\usepackage{graphicx} % Bilder
+\usepackage[%
+	font=footnotesize,% Schriftgroesse wie bei Fussnoten
+	center,%            zentrierte Ausrichtung
+	format=plain%       kein Einzug bei merhzeiligem Text (z. B. bei '\\Quelle: xy')
+]{caption}% Beschriftung fuer Abbildungen/Tabellen
+
+\graphicspath{{images/}} % Standardpfad fuer Bilder
+\DeclareGraphicsExtensions{.pdf,.png,.jpg} % bevorzuge pdf-Dateien vor den anderen
+
+\newcommand{\image}[6]{
+	\begin{figure}[htbp]
+		\centering
+		\includegraphics[width=#3]{#1}
+		\caption[#5]{#4 \\
+			\IfStrEq{#6}{}{}{Quelle: {#6}}
+		}
+		\label{#2}
+	\end{figure}
+}
+
+\usepackage{xstring}  %  ifcase
+\usepackage{listings}% Formatierung Quellcode
+
+\usepackage{csquotes}
+\usepackage[
+	backend=biber,%
+	sortlocale=de_DE,%
+	bibencoding=utf8,%
+	style=alphabetic,%
+]{biblatex}	% Literatur/Quellen
+
+
+\input{htwcd/htwcd.sty}% Corporate Design HTW anwenden
+
+% ======================================================
+% Informationen für PDF-Dokument:
+% ======================================================
+\usepackage[%bookmarks, colorlinks=true, linkcolor=black, citecolor=black, urlcolor=black,%
+	pdfauthor={Salaml},%
+	pdftitle={LoRa / LoRaWAN},%
+	pdfsubject={Sensornetze},%
+	breaklinks=true%
+]{hyperref}% Verlinkungen von Inhaltsverzeichnis, Abbildungen etc. innerhalb des Dokuments
+% ======================================================
+
+\addbibresource{bibliography.bib}% Bibliographie einbinden
+\input{glossary.tex}% Glossar und Akronyme einbinden
+
+% ======================================================
+% Informationen für Titelseite:
+% ======================================================
+\subject{Sensornetze}
+\title{LoRa / LoRaWAN}
+\author{{Salaml}}
+\date{Wintersemester 2021/2022}
+
+% ======================================================
+% Inhalt
+% ======================================================
+
+%\overfullrule=5pt% volle Boxen anzeigen
+
+\begin{document}
+\pagenumbering{Roman} % Seitennummerierung Verzeichnisse mit großen römischen Ziffern 
+\pagestyle{empty} % keine Kopf- oder Fußzeilen auf den ersten Seiten
+\maketitle % Titelseite
+\clearpage
+
+\pagestyle{plain} % normale Kopf- und Fußzeilen für den Rest
+
+\tableofcontents % Inhaltsverzeichnis
+\clearpage
+
+\printglossary[type=\acronymtype,style=long,title=Abkürzungsverzeichnis]% Abkürzungen 
+\printglossary[style=altlist,title=Glossar]% Glossar
+\printglossary[type=symbolslist,style=long]% Symbole
+
+\listoffigures % Abbildungsverzeichnis
+\listoftables % Tabellenverzeichnis
+%\lstlistoflistings % Codelistings
+\clearpage
+\pagenumbering{arabic} % ab jetzt Nummerierung mit arabischen Ziffern
+
+
+\clearpage
+\pagebreak
+\printbibliography[title=Literaturverzeichnis]
+\pagebreak
+
+\appendix % ab hier Formatierung für Anhang
+\chapter{Anhang}
+
+\end{document}
