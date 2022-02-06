@@ -169,16 +169,43 @@ Nachteilig bei \gls{OTAA} ist die Komplexität des Beitrittsprozesses.
 
 \section{Geräteklassen}\label{sec.lorawan.classes}
 Endgeräten im LoRaWAN wird eine Geräteklasse zugewiesen.
-Diese ändert die Zeitpunkte, zu denen das Gerät empfangsbereit ist, also einen Downlink vom Gateway empfangen kann.
-TODO siehe \autoref{img.lorawan-classes}
+Anhand dieser Einstellung werden die zeitlichen Intervalle festgelegt, zu denen das Gerät empfangsbereit ist.
+In diesen sogenannten Empfangsfenstern kann das Endgerät einen Downlink vom Gateway empfangen, zu allen anderen Zeitpunkten ist ein Empfang durch das Gerät nicht möglich.
+Je nach benötigter Latenz einer Nachricht von der Anwendung zum Endgerät wird dem Endgerät die passende Klasse zugewiesen. 
+\cite{loraclasses}
 
 \image{lorawan-classes}{img.lorawan-classes}{\textwidth}{Empfangsfenster der Geräteklassen bei LoRaWAN}{Geräteklassen bei LoRaWAN}{https://witekio.com/wp-content/uploads/2018/01/Lora-wan-class.png}
+In \autoref{img.lorawan-classes} sind die Empfangsfenster im zeitlichen Verlauf nach einem Uplink des Endgeräts dargestellt.
+Allen Klassen gemein ist das Empfangsfenster "`RX1"', welches (abhängig von den Einstellungen des LoRaWAN) üblicherweise 1 Sekunde nach dem Senden einer Nachricht für kurze Zeit geöffnet wird.
+In Klasse A und B wird nach einer weiteren kurzen (vom Netzwerk abhängigen) Verzögerung noch das Empfangsfenster "`RX2"' geöffnet.
+Danach ist ein Gerät der Klasse A erst wieder nach dem nächsten Uplink erreichbar, die Latenz ist entsprechend am größten und entspricht maximal der Dauer zwischen zwei Uplinks.
+
+Geräte der Klasse B öffnen periodisch ein Empfangsfenster, welches durch vom Gateway gesendete Beacons gesteuert wird.
+Die maximale Latenz beträgt hierbei die eingestellte Periodendauer.
+
+Geräte der Klasse C sind (außer wenn sie selber senden) immer empfangsbereit, es gibt entsprechend keine Latenz.
+
+Währends eines offenen Empfangsfensters wird Energie für das Betreiben des LoRa-Chips benötigt.
+Der Energiebedarf der Endgeräte ist also abhängig von der eingestellten Klasse.
+Bei Klasse C ist der Energiebedarf am höchsten, da der LoRa-Chip dauerhaft aktiviert sein muss.
+Der Energiebedarf ist dagegen am geringsten, wenn das Gerät in Klasse A ist, da nur während kurzer Zeitfenster Energie für den Empfang benötigt wird.
 
 
 
-\section{ADR}
-TODO
+\section{Adaptive Data Rate (ADR)}
+In \autoref{sec.lora.sf} wurde die Konkurrenz zwischen Airtime, Energiebedarf und Reichweite bei Nutzung verschiedener Spreading Factors beschrieben.
+LoRaWAN löst dieses Problem mittels des Verfahrens \gls{ADR}, welches eine Möglichkeit zur automatischen Optimierung dieser Werte bietet.
+Die Nutzung des Verfahrens kann durch das Endgerät gesteuert werden und sollte bei stabilen Umgebungsbedingungen (der Funkübertragung) aktiviert werden.
+\cite{loraadr}
+
 \image{lorawan-ADR}{img.lorawan-ADR}{\textwidth}{Ablauf ADR}{Ablauf ADR}{eigene Darstellung}
+In \autoref{img.lorawan-ADR} ist der Ablauf von ADR dargestellt.
+Nach jeder vom Endgerät empfangenen Nachricht wird das vom Gateway ermittelte \acrlong{SNR} durch den Netzwerkserver gespeichert.
+Für die Initialisierung werden 20 Nachrichten benötigt.
+In der Betriebsphase wird nach jeder empfangenen Nachricht der Durchschnitt des SNR der letzten Nachrichten berechnet.
+Anschließend wird die Differenz zum mindestens nötigen SNR für erfolgreichen Empfang gebildet.
+Bei einer hohen Differenz gibt es einen SNR-Überschuss und das Endgerät sollte die Sendeleistung reduzieren oder den Spreading Factor verringern (führt zu Erhöhung Datenrate und Verringerung Airtime).
+Bei einem SNR-Defizit sollte das Endgerät entsprechend die Sendeleistung oder den Spreading Factor erhöhen (führt zu Verringerung Datenrate und Erhöhung Airtime).
+Der Netzwerkserver sendet die passende Kontrollnachricht an das Gerät mit der Information, entsprechend den Spreading Factor zu verändern.
 
-
-Frequenzen werden durchgewechselt, um nicht auf einer Frequenz mit vielen Störungen hängen zu bleiben
+Für die Berechnung wird der Durchschnitt mehrerer Messungen verwendet, damit der Regelkreis nicht durch kurzzeitig auftretende Störungen instabil wird.
