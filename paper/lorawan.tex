@@ -3,6 +3,7 @@ Mittels LoRaWAN können über LoRa kommunizierende Endgeräte zu einem Netzwerk 
 LoRaWAN gibt dabei die Systemarchitektur und die zur Kommunikation genutzten Protokolle vor.
 
 
+
 \section{Architektur}
 Der grundlegende Architektur von LoRaWAN ist in \autoref{img.lorawan-architecture} dargestellt.
 Die Komponenten sind von links nach rechts mit steigender Abstraktion von der eigentlichen LoRa-Kommunikation angeordnet.
@@ -10,23 +11,32 @@ Eine Nachricht vom Endgerät zur Applikation hin wird als \gls{Uplink}, eine Nac
 \cite{lorawanarchitecture}
 \image{lorawan-architecture}{img.lorawan-architecture}{\textwidth}{Systemarchitektur bei LoRaWAN}{Systemarchitektur bei LoRaWAN}{bearbeitet aus Zerynth srl, https://www.zerynth.com/wp-content/uploads/2017/05/lorawan-architecture.jpg}
 
+Im folgenden werden die einzelnen Komponenten von LoRaWAN näher erläutert und jeweils deren Verhalten bei einem Up- und Downlink beschrieben.
+
 
 \subsection{Endgerät}
-TODO 
+Endgeräte, auch als \glspl{Node} bezeichnet, werden über das LoRaWAN vernetzt und können Daten zur Applikation senden bzw. von dieser empfangen.
+Nodes kommunizieren ausschließlich über LoRa mit dem LoRaWAN, müssen also über die dafür notwendige Hardware (LoRa-Chip, Antenne) verfügen.
+Häufig sind Nodes auf besonders energiesparsamen Betrieb ausgelegt und batteriebetrieben.
+Um die in \autoref{sec.lora.basics} beschriebenen gesetzlichen Vorgaben einzuhalten, sind die Sendeintervalle vergleichsweise hoch (Minuten bis Stunden oder Tage).
 
 \subsubsection{Uplink}
-TODO
+Ein Node kann Daten per LoRa senden.
+Dazu wird auf die Nutzdaten (\gls{Payload}) zuerst die Applikationsverschlüsselung angewendet, darauf wiederum die Netzwerkverschlüsselung.
+Per LoRa gesendete Pakete können von allen Nodes und Gateways im Sendebereich empfangen werden.
 
 \subsubsection{Downlink}
-TODO
+Nodes können in verschiedene Geräteklassen eingeteilt werden (siehe \autoref{sec.lorawan.classes}) und sind davon abhängig zu unterschiedlichen Zeiten empfangsbereit.
+Wird während eines Empfangsfensters eine an den Node adressierte Nachricht vom Gateway empfangen, so erfolgt die Entfernung der verschiedenen Verschlüsselungsschichten und anschließend die Verarbeitung der Nutzdaten.
 
 
 \subsection{Gateway}
-Ein Gateway bildet die Schnittstelle zwischen der Funkkommunikation per LoRa und den restlichen Komponenten des Netzwerks.
-LoRa zur Datenübertragung wird somit lediglich von Endgeräten und Gateways genutzt.
-TODO
+Ein \gls{Gateway} bildet die Schnittstelle zwischen der Funkkommunikation per LoRa und den restlichen Komponenten des Netzwerks.
+LoRa zur Datenübertragung wird somit lediglich zwischen Endgeräten und Gateways genutzt.
+
 In einem LoRaWAN können beliebig viele Gateways genutzt werden.
-%Durch hinzufügen von Gateways kann der Durchsatz der Kommunikation zu den Endgeräten erhöht werden.
+Durch hinzufügen von Gateways an bisher wenig nicht oder schlecht angebundenen Orten, kann auf einfache Weise die Netzabdeckung verbessert werden.
+
 
 \subsubsection{Uplink}
 Ein Gateway empfängt die von den Endgeräten über LoRa gesendeten Nachrichten.
@@ -39,7 +49,7 @@ Diese werden per LoRa gesendet und können von Endgeräten in Reichweite des Gat
 
 
 \subsection{Netzwerkserver}
-Der Netzwerkserver bildet im LoRaWAN somit das zentrale Element für das Routing der empfangenen und zu sendenden Nachrichten. Es gibt genau einen Netzwerkserver im LoRaWAN.
+Der \gls{Netserver} bildet im LoRaWAN das zentrale Element für das Routing der von Endgeräten empfangenen und an diese zu sendenden Nachrichten. Es gibt genau einen Netzwerkserver im LoRaWAN.
 
 \subsubsection{Uplink}
 Der Netzwerkserver verarbeitet die von den Gateways empfangenen Nachrichten.
@@ -59,14 +69,14 @@ Diese werden zunächst in einer Warteschlange gespeichert (Downlink-Queue).
 Abhängig von der Geräteklasse des adressierten Endgeräts erfolgt die weitere Verarbeitung direkt oder durch bestimmte Auslöser (siehe \autoref{sec.lorawan.classes}).
 In der Weiterverarbeitung werden die Paketdaten zunächst der Netzwerkverschlüsselung unterzogen.
 Außerdem wird für das adressierte Endgerät das Gateway bestimmt, welches aktuell wahrscheinlich die besten Übertragungsbedingungen zum Endgerät hat.
-Dies wird anhand der gespeicherten Daten über die Signalqualität vorher empfangener Pakete durchgeführt.
+Dies wird anhand der gespeicherten Daten über die Signalqualität vorheriger Uplinks durchgeführt.
 Anschließend werden die verschlüsselten Daten an das ermittelte Gateway weitergeleitet.
 Ein Paket im Downlink wird also immer nur über genau ein Gateway gesendet.
 
 
 \subsection{Applikationsserver}
+Ein \gls{Appserver} dient der Ent- bzw. Verschlüsselung der Applikationsdaten und ist die Schnittstelle des LoRaWAN zu den eigentlichen Anwendungen.
 Im LoRaWAN kann es beliebig viele Applikationsserver geben.
-Diese dienen der Ent- bzw. Verschlüsselung der Applikationsdaten und sind die Schnittstelle des LoRaWAN zu eigentlichen Anwendungen.
 
 \subsubsection{Uplink}
 Ein Applikationsserver empfängt vom Netzwerkserver gesendete Daten.
@@ -81,11 +91,28 @@ Dabei werden die Daten der Applikationsverschlüsselung unterzogen und das Paket
 
 
 \subsection{Join-Server}
-TODO
+Damit eine Kommunikation mit Endgeräten im LoRaWAN möglich ist, müssen diese registriert sein und aktiviert werden (siehe \autoref{sec.lorawan.activation}).
+Ein Teil des Aktivierungsprozesses erfolgt dabei über den \gls{Joinserver}, insbesondere die Verteilung der Sitzungsschlüssel für die Netzwerk- und Applikationsverschlüsselung.
+Im Join-Server wird außerdem der Root-Key für die Verschlüsselung verwaltet, aus dem die genannten Sitzungsschlüssel abgeleitet werden.
+Der Join-Server bildet damit ein wichtiges Element zur Sicherstellung der verschlüsselten Kommunikation.
+Daher ist dieser insbesondere aus dem Netzwerkserver ausgegliedert, um ein Mitlesen der Applikationsdaten durch den Betreiber des Netzwerkserver zu verhindern.
+
+Im LoRaWAN kann es beliebig viele Join-Server geben, die Zuordnung eines Endgeräts zu einem Join-Server muss allerdings eindeutig sein.
+
 
 
 \section{Verschlüsselung}
-TODO
+Nachrichten im LoRaWAN verfügen über mehrere Schichten der Verschlüsselung, um nur denjenigen Komponenten Zugriff auf Daten zu gewähren, wie zum Betrieb des Netzwerks notwendig sind.
+Im folgenden sind die Schritte für einen Uplink beschrieben, im Falle eines Downlinks ist die Reihenfolge entsprechend umgekehrt und Ver- und Entschlüsselung sind vertauscht.
+Die Anwendungsdaten (\gls{Payload}) werden mit dem 128\,Bit-AES-Anwendungssitzungsschlüssel im Endgerät verschlüsselt.
+Diese verschlüsselten Daten werden (zusammen mit weiteren für den Netzwerkserver relevanten Daten) im Endgerät mit dem 128\,Bit-AES-Netzwerksitzungsschlüssel verschlüsselt und (ergänzt um zur Adressierung notwendige Daten) per LoRa gesendet.
+Geräte, die diese ausgesendeten Daten mithören, haben aufgrund der Verschlüsselung keinen Zugriff auf die Daten, lediglich die Geräteadresse wird unverschlüsselt übertragen.
+Auch Gateways können den Inhalt der durch sie weitergeleiteten Pakete nicht mitlesen.
+Im Netzwerkserver erfolgt die Entschlüsselung mit dem Netzwerksitzungsschlüssel und der Netzwerkserver erhält Zugriff auf die benötigten Daten.
+Die Anwendungsdaten sind allerdings weiterhin verschlüsselt und somit nicht durch den Netzwerkserver lesbar.
+Im Applikationsserver erfolgt schlussendlich die Entschlüsselung mit dem Anwendungssitzungsschlüssel.
+Damit erhält neben dem Endgerät nur der Applikationsserver Zugriff auf die Anwendungsdaten.
+
 
 
 \section{Registrierung und Aktivierung}\label{sec.lorawan.activation}
@@ -95,7 +122,7 @@ siehe \autoref{tab.lorawan-activation} und \autoref{img.lorawan-OTAA}
 \begin{tabular}{l|l|l}
  & \textbf{Activation by Personalization (ABP)} & \textbf{Over-the-Air Activation (OTAA)} \\ \hline
 \textbf{Sitzung} & eine statische Sitzung & dynamisch, beliebig oft neu \\ \hline
-\textbf{Schlüssel} & \begin{tabular}[c]{@{}l@{}}Sitzungsschlüssel fest\\ einprogrammiert\end{tabular} & \begin{tabular}[c]{@{}l@{}}Aushandlung für Sitzung,\\ Ableitung aus "`Master-Key"'\end{tabular} \\ \hline
+\textbf{Schlüssel} & \begin{tabular}[c]{@{}l@{}}Sitzungsschlüssel fest\\ einprogrammiert\end{tabular} & \begin{tabular}[c]{@{}l@{}}Aushandlung für Sitzung,\\ Ableitung aus Root-Key\end{tabular} \\ \hline
 \textbf{Beitritt} & Kommunikation direkt möglich & Beitrittsprozess nötig
 \end{tabular}
 \caption{Vergleich der Methoden für Aktivierung von Endgeräten}
@@ -115,11 +142,9 @@ TODO siehe \autoref{img.lorawan-classes}
 
 
 
-
 \section{ADR}
 TODO
 \image{lorawan-ADR}{img.lorawan-ADR}{\textwidth}{Ablauf ADR}{Ablauf ADR}{eigene Darstellung}
 
 
 Frequenzen werden durchgewechselt, um nicht auf einer Frequenz mit vielen Störungen hängen zu bleiben
-
