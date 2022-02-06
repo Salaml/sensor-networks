@@ -10,13 +10,14 @@ Node-> Network: Join-Request,\n<DevEUI>, <JoinEUI>
 activate Network
 Network -> Join: Join-Request, <DevEUI>
 activate Join
-Join -> Join: Sitzungsschlüssel berechnen
+Join -> Join: zufällige <Nonce> wählen
+Join -> Join: Sitzungsschlüssel anhand\n<Nonce> aus \n<Root-Key> berechnen
 Join -> Network: Ok, <Nonce>
 Network -> Node: Join-Accept, <Nonce>, \n<Adresse Node>
 Join -> Network: <Netzwerksitzungsschlüssel>
 deactivate Network
 Join -> App: <Applikationssitzungsschlüssel>
 deactivate Join
-Node -> Node: Netzwerk- und Applikations-\nSitzungsschlüssel\nüber <Nonce> ableiten
+Node -> Node: Sitzungsschlüssel anhand\n<Nonce> aus \n<Root-Key> berechnen
 deactivate Node
 @enduml

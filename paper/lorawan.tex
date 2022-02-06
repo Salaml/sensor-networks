@@ -91,7 +91,7 @@ Dabei werden die Daten der Applikationsverschlüsselung unterzogen und das Paket
 
 
 \subsection{Join-Server}
-Damit eine Kommunikation mit Endgeräten im LoRaWAN möglich ist, müssen diese registriert sein und aktiviert werden (siehe \autoref{sec.lorawan.activation}).
+Damit eine Kommunikation mit Endgeräten im LoRaWAN möglich ist, müssen diese aktiviert werden (siehe \autoref{sec.lorawan.activation}).
 Ein Teil des Aktivierungsprozesses erfolgt dabei über den \gls{Joinserver}, insbesondere die Verteilung der Sitzungsschlüssel für die Netzwerk- und Applikationsverschlüsselung.
 Im Join-Server wird außerdem der Root-Key für die Verschlüsselung verwaltet, aus dem die genannten Sitzungsschlüssel abgeleitet werden.
 Der Join-Server bildet damit ein wichtiges Element zur Sicherstellung der verschlüsselten Kommunikation.
@@ -104,32 +104,66 @@ Im LoRaWAN kann es beliebig viele Join-Server geben, die Zuordnung eines Endger�
 \section{Verschlüsselung}
 Nachrichten im LoRaWAN verfügen über mehrere Schichten der Verschlüsselung, um nur denjenigen Komponenten Zugriff auf Daten zu gewähren, wie zum Betrieb des Netzwerks notwendig sind.
 Im folgenden sind die Schritte für einen Uplink beschrieben, im Falle eines Downlinks ist die Reihenfolge entsprechend umgekehrt und Ver- und Entschlüsselung sind vertauscht.
-Die Anwendungsdaten (\gls{Payload}) werden mit dem 128\,Bit-AES-Anwendungssitzungsschlüssel im Endgerät verschlüsselt.
+Die Anwendungsdaten (\gls{Payload}) werden mit dem 128\,Bit-AES-Applikationssitzungsschlüssel im Endgerät verschlüsselt.
 Diese verschlüsselten Daten werden (zusammen mit weiteren für den Netzwerkserver relevanten Daten) im Endgerät mit dem 128\,Bit-AES-Netzwerksitzungsschlüssel verschlüsselt und (ergänzt um zur Adressierung notwendige Daten) per LoRa gesendet.
 Geräte, die diese ausgesendeten Daten mithören, haben aufgrund der Verschlüsselung keinen Zugriff auf die Daten, lediglich die Geräteadresse wird unverschlüsselt übertragen.
 Auch Gateways können den Inhalt der durch sie weitergeleiteten Pakete nicht mitlesen.
 Im Netzwerkserver erfolgt die Entschlüsselung mit dem Netzwerksitzungsschlüssel und der Netzwerkserver erhält Zugriff auf die benötigten Daten.
 Die Anwendungsdaten sind allerdings weiterhin verschlüsselt und somit nicht durch den Netzwerkserver lesbar.
-Im Applikationsserver erfolgt schlussendlich die Entschlüsselung mit dem Anwendungssitzungsschlüssel.
+Im Applikationsserver erfolgt schlussendlich die Entschlüsselung mit dem Applikationssitzungsschlüssel.
 Damit erhält neben dem Endgerät nur der Applikationsserver Zugriff auf die Anwendungsdaten.
 
 
 
-\section{Registrierung und Aktivierung}\label{sec.lorawan.activation}
-TODO
-siehe \autoref{tab.lorawan-activation} und \autoref{img.lorawan-OTAA}
-\begin{table}[htbp]
-\begin{tabular}{l|l|l}
- & \textbf{Activation by Personalization (ABP)} & \textbf{Over-the-Air Activation (OTAA)} \\ \hline
-\textbf{Sitzung} & eine statische Sitzung & dynamisch, beliebig oft neu \\ \hline
-\textbf{Schlüssel} & \begin{tabular}[c]{@{}l@{}}Sitzungsschlüssel fest\\ einprogrammiert\end{tabular} & \begin{tabular}[c]{@{}l@{}}Aushandlung für Sitzung,\\ Ableitung aus Root-Key\end{tabular} \\ \hline
-\textbf{Beitritt} & Kommunikation direkt möglich & Beitrittsprozess nötig
-\end{tabular}
-\caption{Vergleich der Methoden für Aktivierung von Endgeräten}
-\label{tab.lorawan-activation}
-\end{table}
+\section{Aktivierung}\label{sec.lorawan.activation}
+Damit ein Endgerät im LoRaWAN erfolgreich kommunizieren kann, muss es aktiviert sein.
+Die Aktivierung dient insbesondere dazu, die für die Ver- und Entschlüsselung notwendigen Sitzungsschlüssel an die zuständigen Komponenten zu verteilen und dem Endgerät eine in diesem LoRaWAN eindeutige Adresse zuzuweisen.
+Im folgenden werden die beiden verfügbaren Aktivierungsmethoden beschrieben.
+In \autoref{tab.lorawan-activation} sind diese zum Vergleich dargestellt.
+\cite{loraactivation}
+\begin{singlespacing}
+	\begin{table}[htbp]
+		\begin{tabular}{l|l|l}
+			 & \textbf{Activation by Personalization (ABP)} & \textbf{Over-the-Air Activation (OTAA)} \\ \hline
+			\textbf{Sitzung} & eine statische Sitzung & dynamisch, beliebig oft neu \\ \hline
+			\textbf{Schlüssel} & \begin{tabular}[c]{@{}l@{}}Sitzungsschlüssel fest\\ einprogrammiert\end{tabular} & \begin{tabular}[c]{@{}l@{}}Aushandlung für Sitzung,\\ Ableitung aus Root-Key\end{tabular} \\ \hline
+			\textbf{Beitritt} & Kommunikation direkt möglich & Beitrittsprozess nötig \\ \hline
+			\textbf{Sicherheit} & geringer & hoch
+		\end{tabular}
+		\caption{Vergleich der Methoden für die Aktivierung von Endgeräten}
+		\label{tab.lorawan-activation}
+	\end{table}
+\end{singlespacing}
 
-\image{lorawan-OTAA}{img.lorawan-OTAA}{\textwidth}{Beitrittsprozess}{Beitrittsprozess}{eigene Darstellung}
+
+\subsection{Activation by Personalization (ABP)}
+Bei \gls{ABP} werden die Sitzungsschlüssel vor Inbetriebnahme des Geräts berechnet und eine freie Geräteadresse bestimmt.
+Diese statischen Sitzungsdaten werden zum einen fest in das Endgerät einprogrammiert und zum anderen an die zuständigen Server verteilt (Netzwerksitzungsschlüssel und Geräteadresse an Netzwerkserver, Applikationssitzungsschlüssel an Applikationsserver).
+Damit wurde eine Sitzung etabliert und eine Kommunikation mit diesem Gerät ist sofort möglich.
+
+Nachteil von \gls{ABP} ist die eingeschränkte Sicherheit, da bei Kompromittierung der Schlüssel keine neue Sitzung mit anderen Schlüsseln gestartet werden kann und die Verschlüsselung dann gebrochen ist.
+\gls{ABP} wird vor allem beim Debugging während der Entwicklung von Endgeräten eingesetzt, da nach einem Neustart direkt ohne einen Aktivierungsprozess kommuniziert werden kann.
+
+
+\subsection{Over-the-Air Activation (OTAA)}
+Bei \gls{OTAA} erfolgen die Berechnung der Sitzungsschlüssel und die Zuweisung der Geräteadresse dynamisch.
+Dabei wird vor Inbetriebnahme des Geräts eine (möglichst) weltweit eindeutige ID für das Gerät (DevEUI) und ein Root-Key festgelegt.
+Diese Daten werden im Gerät fest einprogrammiert und im Join-Server hinterlegt.
+Im Gerät wird außerdem die ID des zuständigen Join-Servers (JoinEUI) hinterlegt.
+
+Zur Aktivierung wird der in \autoref{img.lorawan-OTAA} dargestellte Beitrittsprozess durchlaufen.
+Das Endgerät sendet seine Geräte-ID DevEUI und die ID des Join-Servers JoinEUI unverschlüsselt an das Netzwerk.
+Anhand der JoinEUI erfolgt im Netzwerkserver die Weiterleitung an den zuständigen Join-Server.
+Dieser wählt eine zufällige Nonce und berechnet daraus anhand des für dieses Endgerät hinterlegten Root-Keys neue Sitzungsschlüssel.
+Diese Sitzungsschlüssel werden vom Join-Server an die jeweils dafür zuständigen Server verteilt.
+Der Netzwerkserver bestimmt eine für diese Sitzung gültige Adresse für das Endgerät und leitet diese zusammen mit der Nonce des Join-Servers an das Endgerät weiter.
+Die Sitzungsschlüssel werden demzufolge nicht per LoRa gesendet und können daher nicht abgehört werden.
+Das Endgerät berechnet die Sitzungsschlüssel anhand der Nonce und des Root-Keys über denselben Algorithmus wie der Join-Server.
+In der Abbildung sind die Berechnungsschritte in Schritt 4 und 9 demzufolge identisch.
+\image{lorawan-OTAA}{img.lorawan-OTAA}{\textwidth}{Beitrittsprozess Over-the-Air Activation}{Beitrittsprozess Over-the-Air Activation}{eigene Darstellung}
+
+Die Sicherheit von \gls{OTAA} ist höher als die von \gls{ABP}, da jederzeit eine neue Sitzung mit neuen Sitzungsschlüsseln initiiert werden kann.
+Nachteilig bei \gls{OTAA} ist die Komplexität des Beitrittsprozesses.
 
 
 
