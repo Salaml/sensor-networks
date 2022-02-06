@@ -1,0 +1,128 @@
+\chapter{LoRa}\label{chp.lora}
+
+
+
+\section{Grundlagen}\label{sec.lora.basics}
+LoRa ist ein proprietäres Übertragungsverfahren per Funk.
+Es wurde vom Unternehmen Semtech entwickelt, um Kommunikation mit niedrigem Energiebedarf über große Distanzen zu ermöglichen.
+Im Vergleich zu anderen Funktechnologien wie Bluetooth oder Mobilfunk, ist die "`Bandbreite"' der Datenübertragung (Datenrate) bei LoRa nur gering.
+Dagegen ist die erzielbare Reichweite größer, wie \autoref{img.bandwidth-range} zeigt.
+\cite{semtech}
+
+\image{bandwidth-vs-range}{img.bandwidth-range}{\textwidth}{Bandbreite (Datenrate) und Reichweite von LoRa im Vergleich zu anderen Funktechnologien}{Bandbreite und Reichweite von LoRa im Vergleich zu anderen Funktechnologien}{The Things Industries, https://www.thethingsnetwork.org/docs/lorawan/what-is-lorawan/bandwidth-vs-range.png}
+
+Für LoRa werden ortsabhängig Frequenzbereiche aus lizenzfreien Bändern genutzt (\gls{ISM}, \gls{SRD}).
+In Europa kommt das SRD-Band um 868\,MHz zum Einsatz.\cite{loraparameter}
+Obwohl es sich hierbei um ein freies Frequenzband handelt, sind dennoch einige Einschränkungen zu beachten:\cite{lorabasics}
+\begin{itemize}\singlespacing\setlength\itemsep{-0.2em}
+\item Sendeleistung \gls{Uplink} begrenzt auf 25\,mW (14\,dBm)
+\item Sendeleistung \gls{Downlink} begrenzt auf 500\,mW (27\,dBm)
+\item Duty Cycle Senden pro Gerät begrenzt auf kanalabhängig 0,1\% bzw. 1\%
+\end{itemize}
+Diese Grenzen sind gesetzlich festgelegt, um eine Blockade des Bandes unter anderem durch zu häufiges Senden zu verhindern.
+Damit ist jedem eine faire Verwendung dieses Bandes unter Beachtung der Grenzen möglich.
+
+Um insbesondere die Begrenzung der Sendezeit inzuhalten zu können, sollte eine Minimierung der Sendezeit (\gls{Airtime}) erfolgen.
+
+
+
+\section{Modulation Chirp Spread Spectrum }\label{sec.lora.modulation}
+Per LoRa gesendete Signale werden mittels des Verfahrens \gls{Modulation} moduliert.
+Grundlage dieser Modulation sind sogenannte \glspl{Chirp}.
+Eine Anpassung der Datenrate ist über den sogenannten \gls{SF} möglich.
+
+
+\subsection{Chirps}\label{sec.lora.modulation.chirp}
+Ein Chirp ist ein Impuls mit konstanter Amplitude und sich ändernder Frequenz.
+Bei steigender Frequenz wird der Chirp als Upchirp bezeichnet, bei fallender als Downchirp.
+In \autoref{img.chirp-linear} ist ein Upchirp mit linearem Anstieg der Frequenz veranschaulicht.
+\image{chirp-linear}{img.chirp-linear}{0.7\textwidth}{Upchirp mit linearem Frequenzanstieg}{Upchirp mit linearem Frequenzanstieg}{Georg-Johann, CC BY-SA 3.0, via Wikimedia Commons, https://commons.wikimedia.org/wiki/File:Linear-chirp.svg}
+
+Die Änderung der Frequenz der Chirps erfolgt nicht kontinuierlich, sondern zu diskreten Zeitpunkten.
+Ein einzelner Zustand heißt dabei Chip, die Anzahl an Frequenzänderungen pro Zeiteinheit wird als Chiprate $R_c$ bezeichnet.
+Bei LoRa entspricht dies der von den Chirps genutzten Bandbreite $B$ (üblicherweise 125\,kHz).
+\cite[S. 10]{loramodulation}
+\begin{equation}
+	R_c = B = 125\,\mathrm{kHz}
+	\label{eq.chip-rate}
+\end{equation}
+
+
+\subsection{Symbole}
+Zur Kodierung von Daten wird ein Chirp zeitlich verschoben und bildet damit ein sogenanntes Symbol.
+Die Startfrequenz des Symbols legt dabei die kodierten Daten fest.
+Nachdem die Frequenz des Chirps innerhalb des Symbols die Grenze der Bandbreite erreicht hat, wird der Chirp mit der Frequenz der anderen Bereichsgrenze fortgesetzt (Upchirp: Sprung von $f_{max}$ zu $f_{min}$, Downchirp: Sprung von $f_{min}$ zu $f_{max}$).
+\cite{lorachirps}
+
+\image{lora-symbols}{img.lora-symbols}{\textwidth}{Spektrum verschiedener LoRa-Symbole}{Spektrum verschiedener LoRa-Symbole}{bearbeitet aus Sakshama Ghoslya, https://www.sghoslya.com/p/lora\_9.html}
+In \autoref{img.lora-symbols} ist der Frequenzgang verschiedener Symbole anhand des Spektrums veranschaulicht.
+Innerhalb der Symbole ist jeweils der Sprung von der maximalen Frequenz $f_{max}$ zur minimalen Frequenz $f_{min}$ und damit der Lauf über den kompletten Frequenzbereich erkennbar.
+Innerhalb eines Symbols wird dementsprechend immer die komplette Bandbreite genutzt, lediglich die Startfrequenz unterscheidet sich nach den kodierten Daten.
+Aufgrund dieser Verteilung des Signals über das Spektrum wird das Modulationsverfahren Chirp Spread Spectrum genannt.
+
+Die Anzahl der Symbole pro Zeiteinheit wird als Symbolrate $R_s$ bezeichnet.
+
+
+\subsection{Spreading Factor}
+Die Dauer und der Informationsgehalt der Symbole kann über denn sogenannten Spreading Factor $SF$ eingestellt werden.
+Dieser gibt die Anzahl Bits an, die in einem Symbol kodiert werden können.
+Für die Symbolrate gilt die in \autoref{eq.symbol-rate} dargestellte Beziehung.
+\cite[S. 10]{loramodulation}
+\begin{equation}
+	R_s = \frac{B}{2^{SF}} = \frac{R_c}{2^{SF}}
+	\label{eq.symbol-rate}
+\end{equation}
+Bei Erhöhung des Spreading Factors um 1 halbiert sich damit die Symbolrate, die Dauer der Symbole verdoppelt sich.
+In \autoref{img.lora-spreading-factors} ist die Verdopplung der Zeitdauer bei Erhöhung des Spreading Factors deutlich erkennbar.
+\image{lora-spreading-factors}{img.lora-spreading-factors}{\textwidth}{Spektrum verschiedener Spreading Factors}{Spektrum verschiedener Spreading Factors}{bearbeitet aus Sakshama Ghoslya, https://www.sghoslya.com/p/lora-is-chirp-spread-spectrum.html}
+
+% TODO Beziehung zu Chirprate
+% TODO coding rate -> 4 Bits + 1 bis 4 Bits
+% R_b = SF * BW / 2^SF
+% R_b = SF * (4 / 4+CR) / (2^SF / BW)
+
+LoRa-Empfänger weisen eine bessere Empfindlichkeit gegenüber Signalen mit höherem Spreading Factor auf, wie in \autoref{tab.spreading-factors} dargestellt.
+\begin{table}[htbp]
+\centering
+\begin{tabular}{@{}lcr@{}}
+\textbf{Spreading Factor} & \textbf{Empfindlichkeit} & \textbf{Airtime} \\
+SF7  & -123,0\,dBm &  41\,ms \\
+SF8  & -126,0\,dBm &  72\,ms \\
+SF9  & -129,0\,dBm & 144\,ms \\
+SF10 & -132,0\,dBm & 288\,ms \\
+SF11 & -134,5\,dBm & 577\,ms \\
+SF12 & -137,0\,dBm & 991\,ms \\
+\end{tabular}
+\caption[Empfindlichkeit und Airtime verschiedener Spreading Factors]{Empfindlichkeit und Airtime verschiedener Spreading Factors\\Quelle: Semtech Corporation, https://lora-developers.semtech.com/documentation/tech-papers-and-guides/understanding-adr}
+\label{tab.spreading-factors}
+\end{table}
+Eine Erhöhung des Spreading Factors führt damit zu folgenden Effekten:
+\begin{itemize}\singlespacing\setlength\itemsep{-0.2em}
+\item Airtime Sender erhöht
+\item Energiebedarf Sender erhöht
+\item Empfindlichkeit Empfänger verbessert
+\item Übertragungsreichweite erhöht
+\end{itemize}
+Für diese Werte gelten jedoch unterschiedliche Ziele: Airtime und Energiebedarf sollten minimiert werden, Empfindlichkeit und Reichweite maximiert werden.\cite{loralimits}
+Um einen bestmöglichen Kompromiss zwischen diesen Vorgaben zu schaffen, implementiert LoRaWAN die in \autoref{sec.lorawan.adr} beschriebene automatische Anpassung des Spreading Factors.
+
+
+\subsection{Orthogonalität}
+TODO
+
+
+\section{LoRa-Nachricht}
+Eine per LoRa gesendete Nachricht besteht aus den folgenden Elementen:\cite{loralimits}
+\begin{itemize}\singlespacing\setlength\itemsep{-0.2em}
+\item Präambel
+\item Header + \gls{CRC} für Header
+\item Nutzdaten
+\item \gls{CRC}
+\end{itemize}
+
+Die Präambel dient zur Synchronisation des Empfängers auf die gesendeten Daten.
+Anhand der Präambel wird außerdem der Spreading Factor erkannt, mit welcher die Daten gesendet wurden.
+
+Der Header enthält unter anderem Informationen zur Länge der Nutzdaten.
+
+Am Ende der Nachricht folgt optional ein CRC-Wert zu Fehlerdetektion bzw. -korrektur.
