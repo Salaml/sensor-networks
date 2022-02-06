@@ -1,0 +1,17 @@
+\chapter{Einführung}
+Das Internet of Things (IoT) ist nicht nur in der IT-Branche ein aktuelles Thema sondern dringt auch immer mehr in die Welt von Otto Normalverbraucher vor.
+Das Einstellen der Heizkörpertemperaturen, Schalten von Steckdosen oder Protokollieren von Messwerten wie Temperatur oder Feinstaubgehalt der Luft über das Internet ist für viele Menschen bereits Normalität.
+Das \gls{TTN} bildet einen für jeden nahezu frei nutzbaren Zugang zum Internet of Things mit großer räumlicher Abdeckung.
+
+Grundlage des TTN bildet das Ökosystem aus LoRa und LoRaWAN.
+LoRa ist dabei eine Funktechnologie, die zur Übertragung von Daten über große Distanzen mit wenig Energieaufwand verwendet wird. 
+Mittels LoRaWAN können Geräte, die LoRa beherrschen, in ein Netzwerk eingebunden werden und damit Teil des Internet of Things werden.
+Kernelement von LoRa und LoRaWAN ist dabei ein möglichst niedriger Energiebedarf der Endgeräte.
+
+\image{lorawan-architecture-simple}{img.arch-simple}{0.9\textwidth}{Architektur von LoRaWAN (vereinfacht)}{Architektur von LoRaWAN (vereinfacht)}{bearbeitet aus Zerynth srl, https://www.zerynth.com/wp-content/uploads/2017/05/lorawan-architecture.jpg}
+Anhand von \autoref{img.arch-simple} soll die Abgrenzung von LoRa und LoRaWAN verdeutlicht werden.
+Über LoRa wird lediglich zwischen den Endgeräten und den Gateways kommuniziert, den Schnittstellen zum weiteren Netzwerk.
+Jegliche weitere Kommunikation wird über das Internet abgewickelt.
+Die gesamte Abbildung stellt das LoRaWAN dar, LoRa ist nur die Funktechnologie die auf der untersten Netzebene genutzt wird.
+
+In den folgenden Kapiteln wird zunächst näher auf LoRa als Grundlage der Kommunikation eingegangen, anschließend wird die Vernetzung der Geräte zum LoRaWAN erläutert.

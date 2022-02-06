@@ -36,7 +36,6 @@
 }
 
 \usepackage{xstring}  %  ifcase
-\usepackage{listings}% Formatierung Quellcode
 
 \usepackage{csquotes}
 \usepackage[
@@ -91,21 +90,17 @@
 
 	\listoffigures % Abbildungsverzeichnis
 	\listoftables % Tabellenverzeichnis
-	%\lstlistoflistings % Codelistings
 \end{singlespacing}
 \clearpage
 
 \pagenumbering{arabic} % Seitennummerierung Inhalt mit arabischen Ziffern
 
+\input{intro}
 \input{lora}
 \input{lorawan}
+\input{zusammenfassung}
 
 \clearpage
-\pagebreak
 \printbibliography[title=Literaturverzeichnis]
-\pagebreak
-
-\appendix % ab hier Formatierung für Anhang
-\chapter{Anhang}
 
 \end{document}
