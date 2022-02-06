@@ -1,37 +1,81 @@
 \usepackage[
-    nonumberlist,%  keine Seitenzahlen anzeigen
-    acronym,%       ein Abkürzungsverzeichnis erstellen
-    toc,%           Einträge im Inhaltsverzeichnis
-    automake%
+	nonumberlist,%  keine Seitenzahlen anzeigen
+	acronym,%       ein Abkürzungsverzeichnis erstellen
+	toc,%           Einträge im Inhaltsverzeichnis
+	nopostdot,%     kein Punkt am Ende der Beschreibung
+	automake%
 ]{glossaries}% Glossar
 
 \newglossary[slg]{symbolslist}{syi}{syg}{Symbolverzeichnis}% eigenes Symbolverzeichnis erstellen
 
-\renewcommand*{\glspostdescription}{}% Punkt am Ende der Beschreibung deaktivieren
+\renewcommand{\glsdescwidth}{0.7\textwidth}% Breite bei Typ long erhöhen
 
 % Befehl für Eintrag, der sowohl im Glossar als auch im Abkürzungsverzeichnis auftaucht
 \newcommand{\newglossaryacronym}[4]{
-  \newglossaryentry{#1}{
-    name=\glslink{#2}{#3},
-    text=#3,
-    description={#4},
-    sort={#3}% nach Text sortieren
-  }
-  \newacronym[description={\glslink{#1}{#3}}]{#2}{#2}{#3}
+	\newglossaryentry{#1}{
+		name=\glslink{#2}{#3},
+		text=#3,
+		description={#4},
+		sort={#3}% nach Text sortieren
+	}
+	\newacronym[description={\glslink{#1}{#3}}]{#2}{#2}{#3}
 }
 
 \makeglossaries% Glossar erzeugen
 
-%Befehle für Symbole
-\newglossaryentry{symb:Pi}{
-name=$\pi$,
-description={Die Kreiszahl.},
-sort=symbolpi, type=symbolslist
+% Symbole
+\newglossaryentry{sym.Rc}{
+	name=$R_c$,
+	description={Chiprate der Signalübertragung},
+	sort=rc, type=symbolslist
 }
-\newglossaryentry{symb:Phi}{
-name=$\varphi$,
-description={Ein beliebiger Winkel.},
-sort=symbolphi, type=symbolslist
+
+\newglossaryentry{sym.B}{
+	name=$B$,
+	description={Bandbreite der Signalübertragung},
+	sort=b, type=symbolslist
+}
+
+\newglossaryentry{sym.fmax}{
+	name=$f_{max}$,
+	description={maximale Frequenz des \glspl{Chirp} bei der Signalübertragung},
+	sort=fmax, type=symbolslist
+}
+
+\newglossaryentry{sym.fmin}{
+	name=$f_{min}$,
+	description={minimale Frequenz des \glspl{Chirp} bei der Signalübertragung},
+	sort=fmin, type=symbolslist
+}
+
+\newglossaryentry{sym.Rs}{
+	name=$R_s$,
+	description={Symbolrate der Signalübertragung},
+	sort=rs, type=symbolslist
+}
+
+\newglossaryentry{sym.SF}{
+	name=$SF$,
+	description={\acrlong{SF} der Signalübertragung},
+	sort=sf, type=symbolslist
+}
+
+\newglossaryentry{sym.Rb}{
+	name=$R_b$,
+	description={Bitrate der Signalübertragung},
+	sort=rb, type=symbolslist
+}
+
+\newglossaryentry{sym.CR}{
+	name=$CR$,
+	description={Code Rate für Fehlerkorrektur},
+	sort=cr, type=symbolslist
+}
+
+\newglossaryentry{sym.Rbnet}{
+	name=$R_{b,netto}$,
+	description={Nettobitrate der Signalübertragung},
+	sort=rbnet, type=symbolslist
 }
 
 % Beispiel: Eintrag, der sowohl im Glossar als auch im Abkürzungsverzeichnis auftaucht:
@@ -41,7 +85,7 @@ sort=symbolphi, type=symbolslist
 
 \newglossaryacronym{lora}{LoRa}{Long Range}{proprietärer Funkstandard mit Fokus auf hoher Reichweite bei geringem Energiebedarf}
 
-\newglossaryacronym{sf}{SF}{Spreading Factor}{steuert Übertragunsrate bei \acrshort{LoRa}-Übertragung, höhere Reichweite und längere Übertragungsdauer bei Erhöhung}
+\newglossaryacronym{sf}{SF}{Spreading Factor}{steuert Übertragunsrate und \gls{Airtime} bei \acrshort{LoRa}-Übertragung}
 
 \newglossaryacronym{srd}{SRD}{Short Range Device Band}{lizenzfreies Frequenzband für Übertragungen über kurze Reichweiten bzw. geringer Leistung}
 
@@ -49,71 +93,64 @@ sort=symbolphi, type=symbolslist
 
 \newglossaryacronym{lorawan}{LoRaWAN}{Long Range Wide Area Network}{auf Energiesparsamkeit bei der Datenübertragung ausgelegtes Weitverkehrsnetzwerk unter Nutzung des Funkstandards \acrshort{LoRa}}
 
-\newglossaryacronym{ttn}{TTN}{The Things Network}{weltweites, offenes und communitybasiertes Weitverkehrsnetzwerk auf Basis von \acrshort{LoRaWAN}}
+\newglossaryacronym{ttn}{TTN}{The Things Network}{weltweites, offenes und communitybasiertes \acrshort{LoRaWAN}}
 
-\newglossaryacronym{node}{Node}{Endgerät}{sendet und empfängt Daten im \acrshort{LoRaWAN} und verarbeitet diese (z.\,B. Füllstandssensor mit Alarm und fernsteuerbarem Ventil)}
+\newglossaryacronym{abp}{ABP}{Activation by Personalization}{Aktivierung des \gls{Node} im \acrshort{LoRaWAN} mit vorberechneten Sitzungsschlüsseln}
 
-\newglossaryacronym{abp}{ABP}{Activation By Personalization}{Aktivierung \acrshort{Node} im \acrshort{LoRaWAN} mit vorberechneten Sitzungsschlüsseln}
-
-\newglossaryacronym{otaa}{OTAA}{Over-The-Air-Activation}{Aktivierung \acrshort{Node} im \acrshort{LoRaWAN} über Join-Prozess mit dynamischer Berechnung Sitzungsschlüssel}
+\newglossaryacronym{otaa}{OTAA}{Over-The-Air-Activation}{Aktivierung des \gls{Node} im \acrshort{LoRaWAN} über Join-Prozess mit dynamischer Berechnung Sitzungsschlüssel}
 
 \newglossaryacronym{crc}{CRC}{Cyclic Redundancy Check}{Prüfwert für Fehlererkennung oder -korrektur}
 
-\newglossaryentry{Gateway}
-{
-  name=Gateway,
-  description={Schnittstelle zwischen \acrshort{LoRa}-Kommunikation und Netzwerkserver im \acrshort{LoRaWAN}}
+\newglossaryentry{Gateway}{
+	name=Gateway,
+	description={Schnittstelle zwischen \acrshort{LoRa}-Kommunikation und Netzwerkserver im \acrshort{LoRaWAN}}
 }
 
-\newglossaryentry{Uplink}
-{
-  name=Uplink,
-  description={Nachricht von \acrshort{Node} via \gls{Gateway} an \acrshort{LoRaWAN}-Anwendung}
+\newglossaryentry{Node}{
+	name=Node,
+	description={Endgerät im \acrshort{LoRaWAN}, kann per \acrshort{LoRa} Daten senden und empfangen}
 }
 
-\newglossaryentry{Downlink}
-{
-  name=Downlink,
-  description={Nachricht von \acrshort{LoRaWAN}-Anwendung via \gls{Gateway} an \acrshort{Node}}
+\newglossaryentry{Uplink}{
+	name=Uplink,
+	description={Nachricht von \gls{Node} via \gls{Gateway} an \acrshort{LoRaWAN}-Anwendung}
 }
 
-\newglossaryentry{Airtime}
-{
-  name=Airtime,
-  description={Dauer, welche zum Senden einer Nachricht benötigt wird}
+\newglossaryentry{Downlink}{
+	name=Downlink,
+	description={Nachricht von \acrshort{LoRaWAN}-Anwendung via \gls{Gateway} an \gls{Node}}
 }
 
-\newglossaryentry{Chirp}
-{
-  name=Chirp,
-  description={Signal steigender oder fallender Frequenz mit konstanter Amplitude}
+\newglossaryentry{Airtime}{
+	name=Airtime,
+	description={Dauer, welche zum Senden einer Nachricht benötigt wird}
 }
 
-\newglossaryentry{Modulation}
-{
-  name=Chirp Spread Spectrum,
-  description={Modulationsverfahren unter Verwendung von \glspl{Chirp}}
+\newglossaryentry{Chirp}{
+	name=Chirp,
+	description={Signal steigender oder fallender Frequenz mit konstanter Amplitude}
 }
 
-\newglossaryentry{Netserver}
-{
-  name=Network Server,
-  description={TODO }
-}
-\newglossaryentry{Appserver}
-{
-  name=Application Server,
-  description={TODO }
+\newglossaryentry{Modulation}{
+	name=Chirp Spread Spectrum,
+	description={Modulationsverfahren unter Verwendung von \glspl{Chirp}}
 }
 
-\newglossaryentry{Payload}
-{
-  name=Payload,
-  description={Nutzdaten  zwischen verschiedenen Objekten, das heißt ohne Steuer- und Protokollinformationen}
+\newglossaryentry{Netserver}{
+	name=Network Server,
+	description={TODO }
+}
+\newglossaryentry{Appserver}{
+	name=Application Server,
+	description={TODO }
 }
 
-\newglossaryentry{Payload-Formatter}
-{
-  name=Payload-Formatter,
-  description={Funktion zur Dekodierung der Bytes einer \gls{Payload} zu einem definierten Datenschema}
+\newglossaryentry{Payload}{
+	name=Payload,
+	description={Nutzdaten  zwischen verschiedenen Objekten, das heißt ohne Steuer- und Protokollinformationen}
+}
+
+\newglossaryentry{Payload-Formatter}{
+	name=Payload-Formatter,
+	description={Funktion zur Dekodierung der Bytes einer \gls{Payload} zu einem definierten Datenschema}
 }

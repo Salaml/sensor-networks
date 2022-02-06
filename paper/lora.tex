@@ -22,7 +22,7 @@ Obwohl es sich hierbei um ein freies Frequenzband handelt, sind dennoch einige E
 Diese Grenzen sind gesetzlich festgelegt, um eine Blockade des Bandes unter anderem durch zu häufiges Senden zu verhindern.
 Damit ist jedem eine faire Verwendung dieses Bandes unter Beachtung der Grenzen möglich.
 
-Um insbesondere die Begrenzung der Sendezeit inzuhalten zu können, sollte eine Minimierung der Sendezeit (\gls{Airtime}) erfolgen.
+Um insbesondere die Begrenzung der Sendezeit einzuhalten zu können, sollte eine Minimierung der Sendezeit (\gls{Airtime}) erfolgen.
 
 
 
@@ -39,8 +39,8 @@ In \autoref{img.chirp-linear} ist ein Upchirp mit linearem Anstieg der Frequenz 
 \image{chirp-linear}{img.chirp-linear}{0.7\textwidth}{Upchirp mit linearem Frequenzanstieg}{Upchirp mit linearem Frequenzanstieg}{Georg-Johann, CC BY-SA 3.0, via Wikimedia Commons, https://commons.wikimedia.org/wiki/File:Linear-chirp.svg}
 
 Die Änderung der Frequenz der Chirps erfolgt nicht kontinuierlich, sondern zu diskreten Zeitpunkten.
-Ein einzelner Zustand heißt dabei Chip, die Anzahl an Frequenzänderungen pro Zeiteinheit wird als Chiprate $R_c$ bezeichnet.
-Bei LoRa entspricht dies der von den Chirps genutzten Bandbreite $B$ (üblicherweise 125\,kHz).
+Ein einzelner Zustand heißt dabei Chip, die Anzahl an Frequenzänderungen pro Zeiteinheit wird als Chiprate \gls{sym.Rc} bezeichnet.
+Bei LoRa entspricht dies der von den Chirps genutzten Bandbreite \gls{sym.B} (üblicherweise 125\,kHz).
 \cite[S. 10]{loramodulation}
 \begin{equation}
 	R_c = B = 125\,\mathrm{kHz}
@@ -51,7 +51,7 @@ Bei LoRa entspricht dies der von den Chirps genutzten Bandbreite $B$ (üblicherw
 \subsection{Symbole}
 Zur Kodierung von Daten wird ein Chirp zeitlich verschoben und bildet damit ein sogenanntes Symbol.
 Die Startfrequenz des Symbols legt dabei die kodierten Daten fest.
-Nachdem die Frequenz des Chirps innerhalb des Symbols die Grenze der Bandbreite erreicht hat, wird der Chirp mit der Frequenz der anderen Bereichsgrenze fortgesetzt (Upchirp: Sprung von $f_{max}$ zu $f_{min}$, Downchirp: Sprung von $f_{min}$ zu $f_{max}$).
+Nachdem die Frequenz des Chirps innerhalb des Symbols die Grenze der Bandbreite erreicht hat, wird der Chirp mit der Frequenz der anderen Bereichsgrenze fortgesetzt (Upchirp: Sprung von \gls{sym.fmax} zu \gls{sym.fmin}, Downchirp: Sprung von $f_{min}$ zu $f_{max}$).
 \cite{lorachirps}
 
 \image{lora-symbols}{img.lora-symbols}{\textwidth}{Spektrum verschiedener LoRa-Symbole}{Spektrum verschiedener LoRa-Symbole}{bearbeitet aus Sakshama Ghoslya, https://www.sghoslya.com/p/lora\_9.html}
@@ -60,14 +60,14 @@ Innerhalb der Symbole ist jeweils der Sprung von der maximalen Frequenz $f_{max}
 Innerhalb eines Symbols wird dementsprechend immer die komplette Bandbreite genutzt, lediglich die Startfrequenz unterscheidet sich nach den kodierten Daten.
 Aufgrund dieser Verteilung des Signals über das Spektrum wird das Modulationsverfahren Chirp Spread Spectrum genannt.
 
-Die Anzahl der Symbole pro Zeiteinheit wird als Symbolrate $R_s$ bezeichnet.
+Die Anzahl der Symbole pro Zeiteinheit wird als Symbolrate \gls{sym.Rs} bezeichnet.
 
 
 \subsection{Spreading Factor}
-Die Dauer und der Informationsgehalt der Symbole kann über denn sogenannten Spreading Factor $SF$ eingestellt werden.
+Die Dauer und der Informationsgehalt der Symbole kann über denn sogenannten Spreading Factor \gls{sym.SF} eingestellt werden.
 Dieser gibt die Anzahl Bits an, die in einem Symbol kodiert werden können.
 Für die Symbolrate gilt die in \autoref{eq.symbol-rate} dargestellte Beziehung.
-Da mit jedem Symbol $SF$ Bits kodiert werden, lässt sich daraus die in \autoref{eq.bit-rate} dargestellte Bitrate $R_b$ ableiten.
+Da mit jedem Symbol $SF$ Bits kodiert werden, lässt sich daraus die in \autoref{eq.bit-rate} dargestellte Bitrate \gls{sym.Rb} ableiten.
 \cite[S. 10]{loramodulation}
 \begin{align}
 	R_s & = \frac{B}{2^{SF}} = \frac{R_c}{2^{SF}} \label{eq.symbol-rate}\\
@@ -107,10 +107,10 @@ Um einen bestmöglichen Kompromiss zwischen diesen Vorgaben zu schaffen, impleme
 \subsection{Code Rate}
 Um die korrekte Dekodierung des Signals durch den Empfänger auch bei schlechtem Signalempfang oder Störungen zu gewährleisten, gibt es eine Fehlerkorrektur.
 Dabei werden zu je 4\,Bit Nutzdaten 1 bis 4 Fehlerkorrekturbits hinzugefügt.
-Die Anzahl Fehlerkorrekturbits pro 4 Nutzdatenbits wird als Code Rate $CR$ bezeichnet.
+Die Anzahl Fehlerkorrekturbits pro 4 Nutzdatenbits wird als Code Rate \gls{sym.CR} bezeichnet.
 Üblich sind auch die Bezeichnungen 4/5, 4/6, 4/7 und 4/8.
 
-Durch die zusätzlichen Datenbits verringert sich die Nettodatenrate entsprechend \autoref{eq.net-data-rate}.
+Durch die zusätzlichen Datenbits verringert sich die Nettodatenrate \gls{sym.Rbnet} entsprechend \autoref{eq.net-data-rate}.
 \begin{equation}
 	R_{b,netto} = R_b * \frac{4}{4 + CR} = SF * \frac{B}{2^{SF}} * \frac{4}{4 + CR}
 	\label{eq.net-data-rate}
@@ -121,7 +121,7 @@ Durch die zusätzlichen Datenbits verringert sich die Nettodatenrate entsprechen
 Um gleichzeitig störungsfrei verschiedene Nachrichten per LoRa zu übertragen, müssen die Signale orthogonal zueinander sein.
 Dies ist dann der Fall, wenn die Anstiege der Frequenzen (bezogen auf die Zeit) unterschiedlich sind.
 In \autoref{img.lora-spreading-factors} sind beispielsweise alle Signale jeweils orthogonal zueinander, da sie verschiedene Anstiege aufweisen.
-Signale verschiedener Spreading Factors können daher gleichzeitig störungsfrei gesendet und empfangen werden.
+Signale verschiedener Spreading Factors und gleicher Bandbreite können daher gleichzeitig störungsfrei gesendet und empfangen werden.
 \cite{loraorthogonal}
 
 
@@ -133,10 +133,15 @@ Eine per LoRa gesendete Nachricht besteht aus den folgenden Elementen:\cite{lora
 \item Nutzdaten
 \item \gls{CRC}
 \end{itemize}
-
 Die Präambel dient zur Synchronisation des Empfängers auf die gesendeten Daten.
 Anhand der Präambel wird außerdem der Spreading Factor erkannt, mit welcher die Daten gesendet wurden.
-
 Der Header enthält unter anderem Informationen zur Länge der Nutzdaten.
-
+Im Header wird die größtmögliche Code Rate verwendet, um die Daten auch bei starken Störungen fehlerfrei dekodieren zu können.
 Am Ende der Nachricht folgt optional ein CRC-Wert zu Fehlerdetektion bzw. -korrektur.
+
+
+
+\section{Demo}
+TODO
+
+Code siehe \autoref{lst.pingpong}
