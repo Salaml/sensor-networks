@@ -1,0 +1,44 @@
+\chapter{Anwendungsbeispiele}
+Im folgenden Kapitel werden kurze Beispiele zu Anwendungen von LoRa und LoRaWAN vorgestellt.
+
+
+
+\section{LoRa}
+Für den LoRa-fähigen Mikrocontroller Cubecell\footnote{\url{https://heltec.org/project/htcc-ab02s/}} wurde eine Software entwickelt, mit der die Kommunikation über LoRa getestet werden kann.
+Ein Gerät wird dabei als Client genutzt und sendet die per serieller Verbindung übergebenen Daten.
+Anschließend versucht das Gerät eine potentielle Antwort zu empfangen.
+Ein weiteres Gerät wird als Server genutzt, welcher ständig auf ankommende Pakete wartet.
+Wird ein Paket empfangen, so werden die in den Daten enthaltenen Buchstaben zu Großbuchstaben transformiert und per LoRa gesendet.
+Durch Client und Server werden die gesendeten und empfangenen Daten sowie die Signalstärke und das \gls{SNR} des empfangenen Pakets jeweils auf dem Bildschirm des Mikrocontrollers dargestellt.
+
+Das Protokoll des Clients ist in \autoref{img.lora-demo-console} dargestellt.
+TX bezeichnet dabei die jeweils gesendeten Daten und RX die empfangenen.
+In der Demonstration wurde zunächst über wenige Zentimeter Abstand und mit angebrachter Antenne kommuniziert (Nachricht "`Hallo Welt"' und "`Moin"').
+Durch Entfernen der Antennen konnte gezeigt werden, dass die Signalstärke  sinkt (Nachricht "`1. Antenne weg"' und "`..."' mit nur einer Antenne, Nachricht "`Antennen weg"' komplett ohne Antennen).
+Außerdem wurde die Signalübertragung über mehrere Etagen in den Keller getestet.
+Dabei wurde festgestellt, dass ohne Antenne keine Kommunikation möglich ist (erste Nachricht "`Keller?"').
+Mit angebrachter Antenne kann problemlos durch mehrere Wände kommuniziert werden, die Signalstärke und das \gls{SNR} sinken allerdings im Vergleich zur Übertragung in über wenige Zentimeter (zweite Nachricht "`Keller?"').
+\image{lora-demo-console}{img.lora-demo-console}{0.8\textwidth}{Protokoll des Clients bei Tests der LoRa-Signalübertragung}{Protokoll des Clients bei Tests der LoRa-Signalübertragung}{eigene Darstellung}
+
+Der Quellcode der Software ist auf Github verfügbar.\footnote{\url{https://github.com/Salaml/sensor-networks/tree/main/code}}
+Eine Live-Demonstration ist auf Youtube abrufbar.\footnote{\url{https://www.youtube.com/watch?v=YyFAu_R3ZoA}}
+
+
+
+\section{LoRaWAN}
+In der HTW Dresden wurde ein LoRaWAN-Gateway installiert und in das freie LoRaWAN \gls{TTN} eingebunden.
+Im folgenden wird kurz auf einige durch das Gateway bereitgestellte bzw. erfasste Statistiken eingegangen.
+
+In \autoref{img.gateway-duty-cycle} ist der Duty Cycle des Gateways nach Kanal aufgeschlüsselt dargestellt.
+Es ist erkennbar, dass einige Kanäle häufiger verwendet werden als andere.
+Außerdem wird deutlich, dass LoRa-Übertragungen nicht dauerhaft stattfinden sondern aufgrund des gesetzlichen begrenzten Duty Cycles nur zu sporadischen Zeitpunkten.
+\image{gateway-duty-cycle}{img.gateway-duty-cycle}{0.6\textwidth}{Duty Cycle des LoRaWAN-Gateways der HTW Dresden nach Kanal}{Duty Cycle des LoRaWAN-Gateways der HTW Dresden nach Kanal}{eigene Darstellung}
+
+In \autoref{img.gateway-range} ist die Reichweite des Gateways erkennbar.
+Die Punkte sind nach der Signalstärke gefärbt, mit der eine Nachricht vom angegebenen Punkt das Gateway erreicht hat.
+Die Daten werden erfasst, indem ein Node periodisch (beliebige) Daten ins LoRaWAN sendet während er mit dem Kartierenden in der Umwelt bewegt wird.
+Die empfangenen Daten werden durch das Mobiltelefon des Kartierenden vom Applikationsserver über eine MQTT-Schnittstelle abgerufen.
+Das Mobiltelefon kombiniert die aus den Metadaten verfügbare Signalstärke zusammen mit der aktuellen Position und sendet diese dann an den Server des TTN-Mapper.
+Dort werden die Daten aufbereitet und entsprechend auf der Karte dargestellt.
+Dieser Workflow demonstriert perfekt den Datenfluss durch ein LoRaWAN.
+\image{gateway-range}{img.gateway-range}{0.6\textwidth}{kartierte Signalstärke des LoRaWAN-Gateways der HTW Dresden}{kartierte Signalstärke des LoRaWAN-Gateways der HTW Dresden}{TTN-Mapper, https://ttnmapper.org/heatmap/private/?gateway=htw-dresden-ttn-gw1\&network=NS\_TTS\_V3://ttn@000013}
