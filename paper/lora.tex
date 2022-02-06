@@ -67,19 +67,16 @@ Die Anzahl der Symbole pro Zeiteinheit wird als Symbolrate $R_s$ bezeichnet.
 Die Dauer und der Informationsgehalt der Symbole kann über denn sogenannten Spreading Factor $SF$ eingestellt werden.
 Dieser gibt die Anzahl Bits an, die in einem Symbol kodiert werden können.
 Für die Symbolrate gilt die in \autoref{eq.symbol-rate} dargestellte Beziehung.
+Da mit jedem Symbol $SF$ Bits kodiert werden, lässt sich daraus die in \autoref{eq.bit-rate} dargestellte Bitrate $R_b$ ableiten.
 \cite[S. 10]{loramodulation}
-\begin{equation}
-	R_s = \frac{B}{2^{SF}} = \frac{R_c}{2^{SF}}
-	\label{eq.symbol-rate}
-\end{equation}
+\begin{align}
+	R_s & = \frac{B}{2^{SF}} = \frac{R_c}{2^{SF}} \label{eq.symbol-rate}\\
+	R_b & = SF * R_s = SF * \frac{B}{2^{SF}} = SF * \frac{R_c}{2^{SF}} \label{eq.bit-rate}
+\end{align}
+
 Bei Erhöhung des Spreading Factors um 1 halbiert sich damit die Symbolrate, die Dauer der Symbole verdoppelt sich.
 In \autoref{img.lora-spreading-factors} ist die Verdopplung der Zeitdauer bei Erhöhung des Spreading Factors deutlich erkennbar.
 \image{lora-spreading-factors}{img.lora-spreading-factors}{\textwidth}{Spektrum verschiedener Spreading Factors}{Spektrum verschiedener Spreading Factors}{bearbeitet aus Sakshama Ghoslya, https://www.sghoslya.com/p/lora-is-chirp-spread-spectrum.html}
-
-% TODO Beziehung zu Chirprate
-% TODO coding rate -> 4 Bits + 1 bis 4 Bits
-% R_b = SF * BW / 2^SF
-% R_b = SF * (4 / 4+CR) / (2^SF / BW)
 
 LoRa-Empfänger weisen eine bessere Empfindlichkeit gegenüber Signalen mit höherem Spreading Factor auf, wie in \autoref{tab.spreading-factors} dargestellt.
 \begin{table}[htbp]
@@ -107,8 +104,25 @@ Für diese Werte gelten jedoch unterschiedliche Ziele: Airtime und Energiebedarf
 Um einen bestmöglichen Kompromiss zwischen diesen Vorgaben zu schaffen, implementiert LoRaWAN die in \autoref{sec.lorawan.adr} beschriebene automatische Anpassung des Spreading Factors.
 
 
+\subsection{Code Rate}
+Um die korrekte Dekodierung des Signals durch den Empfänger auch bei schlechtem Signalempfang oder Störungen zu gewährleisten, gibt es eine Fehlerkorrektur.
+Dabei werden zu je 4\,Bit Nutzdaten 1 bis 4 Fehlerkorrekturbits hinzugefügt.
+Die Anzahl Fehlerkorrekturbits pro 4 Nutzdatenbits wird als Code Rate $CR$ bezeichnet.
+Üblich sind auch die Bezeichnungen 4/5, 4/6, 4/7 und 4/8.
+
+Durch die zusätzlichen Datenbits verringert sich die Nettodatenrate entsprechend \autoref{eq.net-data-rate}.
+\begin{equation}
+	R_{b,netto} = R_b * \frac{4}{4 + CR} = SF * \frac{B}{2^{SF}} * \frac{4}{4 + CR}
+	\label{eq.net-data-rate}
+\end{equation}
+
+
 \subsection{Orthogonalität}
-TODO
+Um gleichzeitig störungsfrei verschiedene Nachrichten per LoRa zu übertragen, müssen die Signale orthogonal zueinander sein.
+Dies ist dann der Fall, wenn die Anstiege der Frequenzen (bezogen auf die Zeit) unterschiedlich sind.
+In \autoref{img.lora-spreading-factors} sind beispielsweise alle Signale jeweils orthogonal zueinander, da sie verschiedene Anstiege aufweisen.
+Signale verschiedener Spreading Factors können daher gleichzeitig störungsfrei gesendet und empfangen werden.
+\cite{loraorthogonal}
 
 
 \section{LoRa-Nachricht}
