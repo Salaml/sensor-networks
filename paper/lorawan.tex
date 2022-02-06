@@ -1,0 +1,125 @@
+\chapter{LoRaWAN}
+Mittels LoRaWAN können über LoRa kommunizierende Endgeräte zu einem Netzwerk (WAN) zusammengeschlossen werden.
+LoRaWAN gibt dabei die Systemarchitektur und die zur Kommunikation genutzten Protokolle vor.
+
+
+\section{Architektur}
+Der grundlegende Architektur von LoRaWAN ist in \autoref{img.lorawan-architecture} dargestellt.
+Die Komponenten sind von links nach rechts mit steigender Abstraktion von der eigentlichen LoRa-Kommunikation angeordnet.
+Eine Nachricht vom Endgerät zur Applikation hin wird als \gls{Uplink}, eine Nachricht von der Applikation zum Endgerät hin als \gls{Downlink} bezeichnet.
+\cite{lorawanarchitecture}
+\image{lorawan-architecture}{img.lorawan-architecture}{\textwidth}{Systemarchitektur bei LoRaWAN}{Systemarchitektur bei LoRaWAN}{bearbeitet aus Zerynth srl, https://www.zerynth.com/wp-content/uploads/2017/05/lorawan-architecture.jpg}
+
+
+\subsection{Endgerät}
+TODO 
+
+\subsubsection{Uplink}
+TODO
+
+\subsubsection{Downlink}
+TODO
+
+
+\subsection{Gateway}
+Ein Gateway bildet die Schnittstelle zwischen der Funkkommunikation per LoRa und den restlichen Komponenten des Netzwerks.
+LoRa zur Datenübertragung wird somit lediglich von Endgeräten und Gateways genutzt.
+TODO
+In einem LoRaWAN können beliebig viele Gateways genutzt werden.
+%Durch hinzufügen von Gateways kann der Durchsatz der Kommunikation zu den Endgeräten erhöht werden.
+
+\subsubsection{Uplink}
+Ein Gateway empfängt die von den Endgeräten über LoRa gesendeten Nachrichten.
+Außerdem werden Metadaten wie Signalstärke und \gls{SNR} der empfangenen Signale bestimmt.
+Die Nutzdaten der LoRa-Nachricht und die Metadaten werden vom Gateway an den Netzwerkserver weitergeleitet, üblicherweise per Internet.
+
+\subsubsection{Downlink}
+Ebenso kann das Gateway Daten vom Netzwerkserver empfangen.
+Diese werden per LoRa gesendet und können von Endgeräten in Reichweite des Gateways empfangen werden.
+
+
+\subsection{Netzwerkserver}
+Der Netzwerkserver bildet im LoRaWAN somit das zentrale Element für das Routing der empfangenen und zu sendenden Nachrichten. Es gibt genau einen Netzwerkserver im LoRaWAN.
+
+\subsubsection{Uplink}
+Der Netzwerkserver verarbeitet die von den Gateways empfangenen Nachrichten.
+Wie in \autoref{img.lorawan-architecture} unten links dargestellt, kann die gesendete Nachricht eines Endgeräts von mehreren Gateways gleichzeitig empfangen werden.
+Dabei leitet jedes Gateway die Nachricht an den Netzwerkserver weiter.
+Durch Vergleich des (teilw. verschlüsselten) Dateninhalts der  Nachricht können mehrfach empfangene Nachrichten im Netzwerkserver zu einer einzigen Nachricht zusammengefasst werden.
+Dies wird auch als Deduplizierung bezeichnet.
+
+Außerdem wird für jedes Endgerät gespeichert, über welches Gateway die Signalqualität der empfangenen Daten am besten ist.
+
+Sofern das Endgerät, von dem die Nachricht empfangen wurde, im Netzwerk aktiviert ist (siehe \autoref{sec.lorawan.activation}), kann die Netzwerkverschlüsselung der Nachricht entfernt werden.
+Die entschlüsselten Daten werden an den Applikationsserver weitergeleitet, der für dieses Endgerät festgelegt wurde.
+
+\subsubsection{Downlink}
+Ebenso kann der Netzwerkserver Downlinkpakete vom Applikationsserver empfangen.
+Diese werden zunächst in einer Warteschlange gespeichert (Downlink-Queue).
+Abhängig von der Geräteklasse des adressierten Endgeräts erfolgt die weitere Verarbeitung direkt oder durch bestimmte Auslöser (siehe \autoref{sec.lorawan.classes}).
+In der Weiterverarbeitung werden die Paketdaten zunächst der Netzwerkverschlüsselung unterzogen.
+Außerdem wird für das adressierte Endgerät das Gateway bestimmt, welches aktuell wahrscheinlich die besten Übertragungsbedingungen zum Endgerät hat.
+Dies wird anhand der gespeicherten Daten über die Signalqualität vorher empfangener Pakete durchgeführt.
+Anschließend werden die verschlüsselten Daten an das ermittelte Gateway weitergeleitet.
+Ein Paket im Downlink wird also immer nur über genau ein Gateway gesendet.
+
+
+\subsection{Applikationsserver}
+Im LoRaWAN kann es beliebig viele Applikationsserver geben.
+Diese dienen der Ent- bzw. Verschlüsselung der Applikationsdaten und sind die Schnittstelle des LoRaWAN zu eigentlichen Anwendungen.
+
+\subsubsection{Uplink}
+Ein Applikationsserver empfängt vom Netzwerkserver gesendete Daten.
+Dabei wird zunächst die Applikationsverschlüsselung entfernt.
+Anschließend sind die eigentlichen vom Endgerät gesendeten Daten (\gls{Payload}) im Klartext verfügbar und können beliebig verarbeitet werden.
+Die Metadaten der LoRa-Kommunikation, welche durch die Gateways erfasst wurden (z.\,B. \gls{SNR}), sind ebenso Bestandteil der im Applikationsserver verfügbaren Daten.
+Die weitere Verarbeitung der Uplinks ist allerdings nicht mehr Bestandteil der Architektur von LoRaWAN.
+
+\subsubsection{Downlink}
+Im Applikationsserver können außerdem Downlinks gestartet werden, also Nachrichten zum Endgerät gesendet werden.
+Dabei werden die Daten der Applikationsverschlüsselung unterzogen und das Paket an den Netzwerkserver gesendet.
+
+
+\subsection{Join-Server}
+TODO
+
+
+\section{Verschlüsselung}
+TODO
+
+
+\section{Registrierung und Aktivierung}\label{sec.lorawan.activation}
+TODO
+siehe \autoref{tab.lorawan-activation} und \autoref{img.lorawan-OTAA}
+\begin{table}[htbp]
+\begin{tabular}{l|l|l}
+ & \textbf{Activation by Personalization (ABP)} & \textbf{Over-the-Air Activation (OTAA)} \\ \hline
+\textbf{Sitzung} & eine statische Sitzung & dynamisch, beliebig oft neu \\ \hline
+\textbf{Schlüssel} & \begin{tabular}[c]{@{}l@{}}Sitzungsschlüssel fest\\ einprogrammiert\end{tabular} & \begin{tabular}[c]{@{}l@{}}Aushandlung für Sitzung,\\ Ableitung aus "`Master-Key"'\end{tabular} \\ \hline
+\textbf{Beitritt} & Kommunikation direkt möglich & Beitrittsprozess nötig
+\end{tabular}
+\caption{Vergleich der Methoden für Aktivierung von Endgeräten}
+\label{tab.lorawan-activation}
+\end{table}
+
+\image{lorawan-OTAA}{img.lorawan-OTAA}{\textwidth}{Beitrittsprozess}{Beitrittsprozess}{eigene Darstellung}
+
+
+
+\section{Geräteklassen}\label{sec.lorawan.classes}
+Endgeräten im LoRaWAN wird eine Geräteklasse zugewiesen.
+Diese ändert die Zeitpunkte, zu denen das Gerät empfangsbereit ist, also einen Downlink vom Gateway empfangen kann.
+TODO siehe \autoref{img.lorawan-classes}
+
+\image{lorawan-classes}{img.lorawan-classes}{\textwidth}{Empfangsfenster der Geräteklassen bei LoRaWAN}{Geräteklassen bei LoRaWAN}{https://witekio.com/wp-content/uploads/2018/01/Lora-wan-class.png}
+
+
+
+
+\section{ADR}
+TODO
+\image{lorawan-ADR}{img.lorawan-ADR}{\textwidth}{Ablauf ADR}{Ablauf ADR}{eigene Darstellung}
+
+
+Frequenzen werden durchgewechselt, um nicht auf einer Frequenz mit vielen Störungen hängen zu bleiben
+
