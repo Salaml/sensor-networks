@@ -21,7 +21,7 @@
 	format=plain%       kein Einzug bei merhzeiligem Text (z. B. bei '\\Quelle: xy')
 ]{caption}% Beschriftung fuer Abbildungen/Tabellen
 
-\graphicspath{{../images/}} % Standardpfad fuer Bilder
+\graphicspath{{../images}} % Standardpfad fuer Bilder
 \DeclareGraphicsExtensions{.pdf,.png,.jpg} % bevorzuge pdf-Dateien vor den anderen
 
 \newcommand{\image}[6]{
@@ -75,28 +75,27 @@
 % Inhalt
 % ======================================================
 
-%\overfullrule=5pt% volle Boxen anzeigen
-
 \begin{document}
 \pagenumbering{Roman} % Seitennummerierung Verzeichnisse mit großen römischen Ziffern 
 \pagestyle{empty} % keine Kopf- oder Fußzeilen auf den ersten Seiten
 \maketitle % Titelseite
-\clearpage
 
 \pagestyle{plain} % normale Kopf- und Fußzeilen für den Rest
 
-\tableofcontents % Inhaltsverzeichnis
+\begin{singlespacing}
+	\tableofcontents % Inhaltsverzeichnis
+
+	\printglossary[type=symbolslist,style=longheader]% Symbole
+	\printglossary[type=\acronymtype,style=longheader,title=Abkürzungsverzeichnis]% Abkürzungen
+	\printglossary[style=altlist,title=Glossar]% Glossar
+
+	\listoffigures % Abbildungsverzeichnis
+	\listoftables % Tabellenverzeichnis
+	%\lstlistoflistings % Codelistings
+\end{singlespacing}
 \clearpage
 
-\printglossary[type=\acronymtype,style=long,title=Abkürzungsverzeichnis]% Abkürzungen 
-\printglossary[style=altlist,title=Glossar]% Glossar
-\printglossary[type=symbolslist,style=long]% Symbole
-
-\listoffigures % Abbildungsverzeichnis
-\listoftables % Tabellenverzeichnis
-%\lstlistoflistings % Codelistings
-\clearpage
-\pagenumbering{arabic} % ab jetzt Nummerierung mit arabischen Ziffern
+\pagenumbering{arabic} % Seitennummerierung Inhalt mit arabischen Ziffern
 
 \input{lora}
 
