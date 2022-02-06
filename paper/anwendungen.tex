@@ -35,10 +35,11 @@ Außerdem wird deutlich, dass LoRa-Übertragungen nicht dauerhaft stattfinden so
 \image{gateway-duty-cycle}{img.gateway-duty-cycle}{0.6\textwidth}{Duty Cycle des LoRaWAN-Gateways der HTW Dresden nach Kanal}{Duty Cycle des LoRaWAN-Gateways der HTW Dresden nach Kanal}{eigene Darstellung}
 
 In \autoref{img.gateway-range} ist die Reichweite des Gateways erkennbar.
+\image{gateway-range}{img.gateway-range}{\textwidth}{kartierte Signalstärke des LoRaWAN-Gateways der HTW Dresden}{kartierte Signalstärke des LoRaWAN-Gateways der HTW Dresden}{TTN-Mapper, https://ttnmapper.org/heatmap/private/?gateway=htw-dresden-ttn-gw1\&network=NS\_TTS\_V3://ttn@000013}
 Die Punkte sind nach der Signalstärke gefärbt, mit der eine Nachricht vom angegebenen Punkt das Gateway erreicht hat.
 Die Daten werden erfasst, indem ein Node periodisch (beliebige) Daten ins LoRaWAN sendet während er mit dem Kartierenden in der Umwelt bewegt wird.
 Die empfangenen Daten werden durch das Mobiltelefon des Kartierenden vom Applikationsserver über eine MQTT-Schnittstelle abgerufen.
 Das Mobiltelefon kombiniert die aus den Metadaten verfügbare Signalstärke zusammen mit der aktuellen Position und sendet diese dann an den Server des TTN-Mapper.
 Dort werden die Daten aufbereitet und entsprechend auf der Karte dargestellt.
 Dieser Workflow demonstriert perfekt den Datenfluss durch ein LoRaWAN.
-\image{gateway-range}{img.gateway-range}{0.6\textwidth}{kartierte Signalstärke des LoRaWAN-Gateways der HTW Dresden}{kartierte Signalstärke des LoRaWAN-Gateways der HTW Dresden}{TTN-Mapper, https://ttnmapper.org/heatmap/private/?gateway=htw-dresden-ttn-gw1\&network=NS\_TTS\_V3://ttn@000013}
+
