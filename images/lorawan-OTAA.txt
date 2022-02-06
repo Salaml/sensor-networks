@@ -1,22 +1,22 @@
 @startuml
 participant Node
-participant "Network Server" as Network
-participant "Join Server" as Join
-participant "Application Server" as App
+participant "Netzwerkserver" as Network
+participant "Join-Server" as Join
+participant "Applikationsserver" as App
 
 autonumber
 activate Node
-Node-> Network: Join-Request
+Node-> Network: Join-Request,\n<DevEUI>, <JoinEUI>
 activate Network
-Network -> Join: Join-Request
+Network -> Join: Join-Request, <DevEUI>
 activate Join
 Join -> Join: Sitzungsschlüssel berechnen
 Join -> Network: Ok, <Nonce>
 Network -> Node: Join-Accept, <Nonce>, \n<Adresse Node>
-Join -> Network: <Netzwerk-Sitzungsschlüssel>
+Join -> Network: <Netzwerksitzungsschlüssel>
 deactivate Network
-Join -> App: <Application-Sitzungsschlüssel>
+Join -> App: <Applikationssitzungsschlüssel>
 deactivate Join
-Node -> Node: Netzwerk- und Application-\nSitzungsschlüssel ableiten
+Node -> Node: Netzwerk- und Applikations-\nSitzungsschlüssel\nüber <Nonce> ableiten
 deactivate Node
 @enduml
