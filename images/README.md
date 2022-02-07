@@ -1,4 +1,4 @@
-# sensor-networks
+# Images
 workflow for diagrams:
-.txt -> .svg with [PlantUml](https://plantuml.com/)
-.svg -> .pdf with Inkscape using svg-to-pdf.bat
+- \*.txt -> \*.svg with [PlantUml](https://plantuml.com/)
+- \*.svg -> \*.pdf with [Inkscape](https://inkscape.org/) using svg-to-pdf.bat
