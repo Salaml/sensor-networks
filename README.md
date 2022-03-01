@@ -20,7 +20,7 @@ Software for microcontroller Cubecell to test communication via LoRa
 - [chirp-linear.svg](./images/chirp-linear.svg)
 - [chirp-linear.pdf](./images/chirp-linear.pdf)
 
-[CC0 1.0 Universell (CC0 1.0)](https://creativecommons.org/publicdomain/zero/1.0/) for:
+[CC0 1.0 Universal (CC0 1.0)](https://creativecommons.org/publicdomain/zero/1.0/) for:
 - following elements in folder [images](./images):
   - [README.md](./images/README.md)
   - [gateway-antenna.jpg](./images/gateway-antenna.jpg)
